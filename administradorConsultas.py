@@ -1,9 +1,12 @@
 from descarga import Descarga
 import xml.etree.ElementTree as ET
+REPOSITORY_DIR=REPOSITORY_DIR = "/home/vigtech/shared/repository/"
 class AdministradorConsultas:
 	titulos_descargas = []
+	lista_docs=[]
 	def __init__(self):
 		self.consultas = []
+		self.lista_docs=[]
 		#UNIVERSIDAD = ' ( AFFIL ( universidad  AND  del  AND  valle )  OR  AF-ID ( "Universidad del Valle"  60066812 ) ) '
 		UNIVERSIDAD = ' ( AFFIL ( universidad  AND  del  AND  valle )  OR  AF-ID ( "Universidad del Valle"  60066812 ) ) )'
 		#self.consultas.append('( AFFIL ( ing*  AND  sist*  AND  comp* )  OR  AFFIL ( eng*  AND  sys*  AND  comp* )  OR  AFFIL ( dep*  AND  comput* )  OR  AFFIL ( eisc ) )  AND  ( AFFIL ( universidad  AND  del  AND  valle )  OR  AF-ID ( "Universidad del Valle"  60066812 ) ) ')
@@ -192,6 +195,7 @@ class AdministradorConsultas:
 				titulo = self.descargar_paper(doi.text)
 				if (titulo != None):
 					self.titulos_descargas.append({'title':titulo})
+					self.lista_docs.append(titulo + ".pdf")
 				
 		
 	def obtener_metadatos(self, xml, campo):
@@ -220,8 +224,19 @@ class AdministradorConsultas:
 			print 'ya escribio'
 			self.escribir_resultado(d.obtener_respuesta(d.peticion), str(i+1))
 			
+	def move_files(self,user, nombreProyecto):
+		rutaProyecto = str(user) + "." + str(nombreProyecto)
+				
+		for art in self.lista_docs:
+			nombre = art.replace(" ", "\\ ")
+			os.system("mv -f " + nombre + " " +REPOSITORY_DIR + rutaProyecto + "/")		
 			
-		
+	def escribir_docs(self, user, proyecto):
+		pdfs = open(REPOSITORY_DIR + str(user) + "." + str(proyecto) + "/" + "docs.txt", "a")
+		for pdf in self.lista_docs:
+			if pdf is not None:
+				pdfs.write(pdf + '\n')
+		pdfs.close()
 	
 '''	
 def main():
