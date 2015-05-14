@@ -1,5 +1,6 @@
 from descarga import Descarga
 import xml.etree.ElementTree as ET
+import os
 REPOSITORY_DIR=REPOSITORY_DIR = "/home/vigtech/shared/repository/"
 class AdministradorConsultas:
 	titulos_descargas = []
