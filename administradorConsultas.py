@@ -231,6 +231,10 @@ class AdministradorConsultas:
 			nombre = art.replace(" ", "\\ ")
 			os.system("mv -f " + nombre + " " +REPOSITORY_DIR + rutaProyecto + "/")		
 			
+		#Mueve el xml de una busqueda
+		nombre_xml = 'busqueda.xml'
+		os.system("mv -f " + nombre_xml + " " +REPOSITORY_DIR + rutaProyecto + "/")	
+			
 	def escribir_docs(self, user, proyecto):
 		pdfs = open(REPOSITORY_DIR + str(user) + "." + str(proyecto) + "/" + "docs.txt", "a")
 		for pdf in self.lista_docs:
