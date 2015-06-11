@@ -12,7 +12,7 @@ def get_taski():
 		proyecto = request.args.get('proyecto')
 		user = request.args.get('user')
 		ac = AdministradorConsultas()
-		ac.descargar_papers(consulta)
+		ac.descargar_papers(consulta, 2000)
 		ac.move_files(user,proyecto)
 		ac.escribir_docs(user,proyecto)
 		return jsonify({'titulos':ac.titulos_descargas})
