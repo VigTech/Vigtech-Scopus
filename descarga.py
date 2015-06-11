@@ -48,7 +48,7 @@ class Descarga:
         f.close
 
     # Escribe la respuesta del url en un archivo
-    def descargar(self):
+    def descargar(self, ruta):
         try:
             #r = self.obtener_respuesta(self.peticionXML)
             #titulo = self.obtener_metadatos(r, '{http://purl.org/dc/elements/1.1/}title')[0]
@@ -66,7 +66,7 @@ class Descarga:
                 filename = titulo+'.pdf'
                 #f = open(filename, "w")
                 #f=open("/home/administrador/ManejoVigtech/ArchivosProyectos/" + filename, "w")
-                f=open(filename, "w")
+                f=open(ruta+filename, "w")
                 # Escribir en un nuevo fichero local los datos obtenidos via HTTP.
                 f.write(respuesta)
                 # Cerrar ambos

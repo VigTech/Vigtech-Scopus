@@ -174,21 +174,21 @@ class AdministradorConsultas:
                 print eid.text
                 resultado.write(eid.text.strip()+'\n')
 
-    def descargar_paper(self, doi):
+    def descargar_paper(self, doi, user, proyecto):
         d = Descarga(doi)
         d.buscar_por_doi()
-        return d.descargar()
+        return d.descargar(REPOSITORY_DIR+'%s.%s/'%(user,proyecto))
 
 
 
-    def descargar_papers(self, query, cantidad_recuperados):
+    def descargar_papers(self, query, cantidad_recuperados, user, proyecto):
 
         iteraciones = cantidad_recuperados/100
         for i in range(iteraciones):
 
             d = Descarga(query, i*100)
             xml = d.obtener_respuesta(d.peticion)
-            d.descargar_xml(xml, 'busqueda'+str(i))
+            d.descargar_xml(xml, REPOSITORY_DIR+'%s.%s/busqueda'%(user,proyecto)+str(i))
             respuesta = d.obtener_respuesta(d.peticion)
             tree = ET.parse(respuesta)
             root = tree.getroot()
@@ -196,7 +196,7 @@ class AdministradorConsultas:
             for child in root:
                 for doi in child.findall('{http://prismstandard.org/namespaces/basic/2.0/}doi'):
                     print doi.text
-                    titulo = self.descargar_paper(doi.text)
+                    titulo = self.descargar_paper(doi.text, user, proyecto)
                     if (titulo != None):
                         self.titulos_descargas.append({'title':titulo})
                         self.lista_docs.append(titulo + ".pdf")
@@ -228,22 +228,11 @@ class AdministradorConsultas:
             print 'ya escribio'
             self.escribir_resultado(d.obtener_respuesta(d.peticion), str(i+1))
 
-    def move_files(self,user, nombreProyecto):
-        rutaProyecto = str(user) + "." + str(nombreProyecto)
-
-        for art in self.lista_docs:
-            nombre = art.replace(" ", "\\ ")
-            os.system("mv -f " + nombre + " " +REPOSITORY_DIR + rutaProyecto + "/")
-
-        #Mueve el xml de una busqueda
-        nombre_xml = 'busqueda.xml'
-        os.system("mv -f " + nombre_xml + " " +REPOSITORY_DIR + rutaProyecto + "/")
-
     def escribir_docs(self, user, proyecto):
         pdfs = open(REPOSITORY_DIR + str(user) + "." + str(proyecto) + "/" + "docs.txt", "a")
         for pdf in self.lista_docs:
             if pdf is not None:
-                pdfs.write(pdf + '\n')
+                pdfs.write(pdf.encode('UTF8') + '\n')
         pdfs.close()
 
 

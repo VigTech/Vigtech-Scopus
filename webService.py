@@ -13,8 +13,7 @@ def get_taski():
 		limite = request.args.get('limite')
 		user = request.args.get('user')
 		ac = AdministradorConsultas()
-		ac.descargar_papers(consulta, limite)
-		ac.move_files(user,proyecto)
+		ac.descargar_papers(consulta, int(limite), user, proyecto)
 		ac.escribir_docs(user,proyecto)
 		return jsonify({'titulos':ac.titulos_descargas})
 
