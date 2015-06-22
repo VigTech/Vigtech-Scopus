@@ -1,6 +1,7 @@
 from urllib2 import urlopen, quote
 import xml.etree.ElementTree as ET
 import traceback
+import copy
 #Esta clase sirve para conectarse con scopus y obtener datos de alli
 class Descarga:
     #COnstructor con valores por defecto para una busqueda
@@ -49,6 +50,8 @@ class Descarga:
 
     # Escribe la respuesta del url en un archivo
     def descargar(self, ruta):
+        titulo = ''
+        eid = ''
         try:
             #r = self.obtener_respuesta(self.peticionXML)
             #titulo = self.obtener_metadatos(r, '{http://purl.org/dc/elements/1.1/}title')[0]
@@ -58,10 +61,14 @@ class Descarga:
 
             respuesta = r.read()
 
+
+
             # Verificar si es un xml
             if (not '<full-text-retrieval' in respuesta):
                 xml = self.obtener_respuesta(self.peticionXML)
-                titulo = self.obtener_metadatos(xml, '{http://purl.org/dc/elements/1.1/}title')[0]
+                titulo_eid = self.obtener_metadatos(xml,['{http://purl.org/dc/elements/1.1/}title','{http://www.elsevier.com/xml/svapi/article/dtd}eid'])
+                titulo = titulo_eid[0]
+                eid =  titulo_eid[1]
                 # Archivo local
                 filename = titulo+'.pdf'
                 #f = open(filename, "w")
@@ -73,21 +80,25 @@ class Descarga:
                 f.close()
                 print "%s descargado correctamente." % filename
                 print titulo
-                return titulo
 
+            return (titulo, eid)
             r.close()
 
         except Exception:
             print 'no hay nada', traceback.format_exc()
+            return (titulo, eid)
 
-    def obtener_metadatos(self, xml, campo):
+    def obtener_metadatos(self, xml, campos):
         respuesta = []
         tree = ET.parse(xml)
         root = tree.getroot()
         for child in root:
-            for campito in child.findall(campo):
-                print campito.text
-                respuesta.append(campito.text)
+            for campito in child:
+                for campo in campos:
+                    #print campito.tag
+                    if campito.tag == campo:
+                        #print campito.text, campito.tag
+                        respuesta.append(campito.text)
         return respuesta
 
 '''	
