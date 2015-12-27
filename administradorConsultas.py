@@ -7,6 +7,10 @@ class AdministradorConsultas:
     eids_descargas = []
     lista_docs=[]
     def __init__(self):
+        """"
+        Todo el codigo del constructor debe ser ignorado. (Hay que hacer pruebas borrando todo lo del contructor y comprobar que sigue
+            funcionando)         
+        """"
         self.consultas = []
         self.lista_docs=[]
         UNIVERSIDAD_sin_cerrar_parantesis = ' ( AFFIL ( universidad  AND  del  AND  valle )  OR  AF-ID ( 60066812 ) ) '
@@ -190,6 +194,14 @@ class AdministradorConsultas:
         return eids
 
     def descargar_paper(self, doi, user, proyecto):
+        """"
+        Descarga los archivos pdf desde scopus, a partir del 'doi', y devuelve el titulo y el eid del archivo descargado.
+
+        Parametros
+        doi : doi de un paper.
+        user : Usuario de vigtech que hace la consuluta
+        proyecto : proyecto de vigtech al que corresponde la consulta
+        """"
         d = Descarga(doi)
         d.buscar_por_doi()
         titulo_eid =d.descargar(REPOSITORY_DIR+'%s.%s/'%(user,proyecto))
@@ -198,7 +210,20 @@ class AdministradorConsultas:
 
 
     def descargar_papers(self, query, cantidad_recuperados, user, proyecto):
+        """"
+        Consume el servicio de scopus a partir de la 'query' que se envia, y escribe el xml de respuesta en el directorio compuesto
+        por 'user' y 'proyecto'. Ademas descarga los papers disponibles a partir de los doi que aparezcan en el xml previamente descargados.
+        Por ultimo almacena en los atributos 'eids_descargas' y 'lista_docs' los archivos que fueron descargados.
 
+        Parametros
+        query : Consulta que se le hace a scopus (string) (ejemplo: Heart)
+        cantidad_recuperados : Cantidad de papers que va a devolver scopus en el xml, solo una pequena porcion de estos seran desgargados. (integer)
+        user : Usuario de vigtech que hace la consuluta (string)
+        proyecto : proyecto de vigtech al que corresponde la consulta (string)
+
+        """"
+
+        #Cada xml solo arroja 100 papers, luego si se quieren mas papers hay que descargar varios xml
         iteraciones = cantidad_recuperados/100
         for i in range(iteraciones):
 
@@ -264,6 +289,10 @@ class AdministradorConsultas:
         return eids
 
     def escribir_docs(self, user, proyecto):
+        """"
+        Escribe un archivo llamado docs.txt, en el directorio determinado por 'user' y 'proyecto', en el que almacena los nombres 
+        de los archivos pdf que se descargaron
+        """"
         pdfs = open(REPOSITORY_DIR + str(user) + "." + str(proyecto) + "/" + "docs.txt", "a")
         for pdf in self.lista_docs:
             if pdf is not None:
